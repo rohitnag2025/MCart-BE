@@ -14,10 +14,7 @@ builder.Services.AddSwaggerGen();
 // Use SQL Server for EF Core
 builder.Services.AddDbContext<UserDbContext>(options =>
 {
-    if (builder.Environment.IsDevelopment())
-        options.UseSqlite("Data Source=mcart-users.db");
-    else
-        options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
 // JWT authentication using shared symmetric key (same secret used to issue tokens in UsersController)
@@ -39,8 +36,9 @@ var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
 {
+
     var db = scope.ServiceProvider.GetRequiredService<UserDbContext>();
-    db.Database.EnsureCreated();
+    db.Database.Migrate(); // Automatically apply migrations
 
     // Seed a default test user for local development
     if (!db.Users.Any())

@@ -18,11 +18,7 @@ builder.Services.AddHttpClient("UserService", c => c.BaseAddress = new Uri("http
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<AdminDbContext>();
-    db.Database.EnsureCreated();
-}
+
 
 app.UseSwagger();
 app.UseSwaggerUI();

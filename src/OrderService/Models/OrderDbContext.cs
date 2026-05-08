@@ -15,6 +15,28 @@ namespace OrderService.Models
             modelBuilder.Entity<OrderItem>().HasKey(oi => oi.OrderItemId);
             modelBuilder.Entity<Wishlist>().HasKey(w => w.WishlistId);
             modelBuilder.Entity<Coupon>().HasKey(c => c.CouponId);
+
+            // Set decimal precision for Order
+            modelBuilder.Entity<Order>()
+                .Property(o => o.TotalAmount)
+                .HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Order>()
+                .Property(o => o.Discount)
+                .HasColumnType("decimal(18,2)");
+
+            // Set decimal precision for OrderItem
+            modelBuilder.Entity<OrderItem>()
+                .Property(oi => oi.Price)
+                .HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<OrderItem>()
+                .Property(oi => oi.Discount)
+                .HasColumnType("decimal(18,2)");
+
+            // Set decimal precision for Coupon
+            modelBuilder.Entity<Coupon>()
+                .Property(c => c.Discount)
+                .HasColumnType("decimal(18,2)");
+
             modelBuilder.Entity<Order>()
                 .HasMany(o => o.Items)
                 .WithOne()

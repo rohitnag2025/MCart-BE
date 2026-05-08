@@ -36,7 +36,7 @@ var app = builder.Build();
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ProductDbContext>();
-    db.Database.EnsureCreated();
+    // db.Database.EnsureCreated(); // Removed for production safety
 
     // Seed categories and products per SRS §9 Product Catalogue
     if (!db.Categories.Any())

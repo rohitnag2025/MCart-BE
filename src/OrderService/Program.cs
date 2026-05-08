@@ -28,11 +28,7 @@ builder.Services.AddSingleton<OrderService.Services.OrderEventPublisher>();
 
 var app = builder.Build();
 
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
-    db.Database.EnsureCreated();
-}
+
 
 app.UseSwagger();
 app.UseSwaggerUI();

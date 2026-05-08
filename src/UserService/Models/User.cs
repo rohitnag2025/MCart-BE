@@ -25,6 +25,7 @@ namespace UserService.Models
         {
             modelBuilder.Entity<User>().HasKey(u => u.UserId);
             modelBuilder.Entity<User>().HasIndex(u => u.Email).IsUnique();
+            // No explicit HasColumnType for UserId; let EF map Guid to uniqueidentifier for SQL Server
         }
     }
 }

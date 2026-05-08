@@ -15,6 +15,10 @@ namespace ProductService.Models
                 .WithOne()
                 .HasForeignKey(c => c.ParentId)
                 .IsRequired(false);
+
+            // Ensure decimal columns are mapped correctly for SQL Server
+            modelBuilder.Entity<Product>().Property(p => p.Price).HasColumnType("decimal(18,2)");
+            modelBuilder.Entity<Product>().Property(p => p.Discount).HasColumnType("decimal(18,2)");
         }
     }
 }

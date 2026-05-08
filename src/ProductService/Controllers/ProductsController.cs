@@ -14,23 +14,40 @@ namespace ProductService.Controllers
     public class ProductsController : ControllerBase
     {
         private readonly ProductDbContext _context;
-        private readonly string _imageRoot = "ProductImages";
-        public ProductsController(ProductDbContext context)
+        private readonly AzureBlobService _blobService;
+        public ProductsController(ProductDbContext context, AzureBlobService blobService)
         {
             _context = context;
-            if (!Directory.Exists(_imageRoot))
-                Directory.CreateDirectory(_imageRoot);
+            _blobService = blobService;
         }
 
         // PUBLIC ENDPOINTS
         [HttpGet]
-        public async Task<IActionResult> GetAll([FromQuery] string? search, [FromQuery] Guid? categoryId, [FromQuery] string? sort, [FromQuery] int page = 1, [FromQuery] int pageSize = 20)
+        public async Task<IActionResult> GetAll(
+            [FromQuery] string? search,
+            [FromQuery] int? categoryId,
+            [FromQuery] string? sort,
+            [FromQuery] int page = 1,
+            [FromQuery] int pageSize = 20,
+            [FromQuery] decimal? minPrice = null,
+            [FromQuery] decimal? maxPrice = null,
+            [FromQuery] string? tags = null,
+            [FromQuery] string? gender = null
+        )
         {
             var query = _context.Products.AsQueryable();
             if (!string.IsNullOrEmpty(search))
                 query = query.Where(p => p.Name.Contains(search) || p.Description.Contains(search) || p.Tags.Contains(search));
             if (categoryId.HasValue)
-                query = query.Where(p => p.CategoryId == categoryId);
+                query = query.Where(p => p.CategoryId == categoryId.Value);
+            if (minPrice.HasValue)
+                query = query.Where(p => p.Price >= minPrice);
+            if (maxPrice.HasValue)
+                query = query.Where(p => p.Price <= maxPrice);
+            if (!string.IsNullOrEmpty(tags))
+                query = query.Where(p => p.Tags.Contains(tags));
+            if (!string.IsNullOrEmpty(gender))
+                query = query.Join(_context.Categories.Where(c => c.Gender == gender), p => p.CategoryId, c => c.CategoryId, (p, c) => p);
             // Sorting
             if (!string.IsNullOrEmpty(sort))
             {
@@ -46,7 +63,22 @@ namespace ProductService.Controllers
             }
             var total = await query.CountAsync();
             var products = await query.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
-            return Ok(new { total, products });
+            var result = products.Select(p => new ProductDto {
+                ProductId = p.ProductId,
+                Name = p.Name,
+                Description = p.Description,
+                CategoryId = p.CategoryId,
+                Price = p.Price,
+                Discount = p.Discount,
+                Stock = p.Stock,
+                ImageUrl = string.IsNullOrEmpty(p.ImageBlobName) ? null : _blobService.GetBlobSasUrl(p.ImageBlobName),
+                Tags = p.Tags,
+                IsFeatured = p.IsFeatured,
+                IsNew = p.IsNew,
+                IsOnSale = p.IsOnSale,
+                CreatedAt = p.CreatedAt
+            });
+            return Ok(new { total, products = result });
         }
 
         [HttpGet("{id}")]
@@ -54,8 +86,40 @@ namespace ProductService.Controllers
         {
             var product = await _context.Products.FindAsync(id);
             if (product == null) return NotFound();
-            return Ok(product);
+            var result = new ProductDto {
+                ProductId = product.ProductId,
+                Name = product.Name,
+                Description = product.Description,
+                CategoryId = product.CategoryId,
+                Price = product.Price,
+                Discount = product.Discount,
+                Stock = product.Stock,
+                ImageUrl = string.IsNullOrEmpty(product.ImageBlobName) ? null : _blobService.GetBlobSasUrl(product.ImageBlobName),
+                Tags = product.Tags,
+                IsFeatured = product.IsFeatured,
+                IsNew = product.IsNew,
+                IsOnSale = product.IsOnSale,
+                CreatedAt = product.CreatedAt
+            };
+            return Ok(result);
         }
+// DTO for product responses
+public class ProductDto
+{
+    public Guid ProductId { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public int CategoryId { get; set; }
+    public decimal Price { get; set; }
+    public decimal Discount { get; set; }
+    public int Stock { get; set; }
+    public string? ImageUrl { get; set; }
+    public string Tags { get; set; } = string.Empty;
+    public bool IsFeatured { get; set; }
+    public bool IsNew { get; set; }
+    public bool IsOnSale { get; set; }
+    public DateTime CreatedAt { get; set; }
+}
 
         [HttpGet("featured")]
         public async Task<IActionResult> GetFeatured()
@@ -88,7 +152,7 @@ namespace ProductService.Controllers
         }
 
         [HttpGet("category/{categoryId}")]
-        public async Task<IActionResult> GetByCategory(Guid categoryId)
+        public async Task<IActionResult> GetByCategory(int categoryId)
         {
             var products = await _context.Products.Where(p => p.CategoryId == categoryId).ToListAsync();
             return Ok(products);
@@ -126,7 +190,7 @@ namespace ProductService.Controllers
             product.Price = updated.Price;
             product.Discount = updated.Discount;
             product.Stock = updated.Stock;
-            product.ImageUrl = updated.ImageUrl;
+            product.ImageBlobName = updated.ImageBlobName;
             product.Tags = updated.Tags;
             product.IsFeatured = updated.IsFeatured;
             product.IsNew = updated.IsNew;
@@ -146,6 +210,7 @@ namespace ProductService.Controllers
             return Ok();
         }
 
+
         [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
         [HttpPost("{id}/image")]
         public async Task<IActionResult> UploadImage(Guid id, IFormFile file)
@@ -154,39 +219,27 @@ namespace ProductService.Controllers
             if (product == null) return NotFound();
             if (file == null || file.Length == 0) return BadRequest("No file uploaded");
             var ext = Path.GetExtension(file.FileName);
-            var fileName = $"{id}{ext}";
-            var filePath = Path.Combine(_imageRoot, fileName);
-            using (var stream = new FileStream(filePath, FileMode.Create))
+            var blobName = $"{id}{ext}";
+            // Upload to Azure Blob Storage
+            using (var stream = file.OpenReadStream())
             {
-                await file.CopyToAsync(stream);
+                var blobClient = _blobService.GetBlobClient(blobName);
+                await blobClient.UploadAsync(stream, overwrite: true);
             }
-            product.ImageUrl = $"/api/products/image/{fileName}";
+            product.ImageBlobName = blobName;
             await _context.SaveChangesAsync();
-            return Ok(product.ImageUrl);
+            return Ok(_blobService.GetBlobSasUrl(blobName));
         }
 
-        [HttpGet("image/{fileName}")]
-        public IActionResult GetImage(string fileName)
-        {
-            var filePath = Path.Combine(_imageRoot, fileName);
-            if (!System.IO.File.Exists(filePath)) return NotFound();
-            var ext = Path.GetExtension(fileName).ToLower();
-            var contentType = ext switch
-            {
-                ".jpg" => "image/jpeg",
-                ".jpeg" => "image/jpeg",
-                ".png" => "image/png",
-                _ => "application/octet-stream"
-            };
-            return PhysicalFile(filePath, contentType);
-        }
+        // No local image endpoint needed; images are served from Azure Blob Storage
 
         // CATEGORY ADMIN
         [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
         [HttpPost("categories")]
         public async Task<IActionResult> CreateCategory([FromBody] Category category)
         {
-            category.CategoryId = Guid.NewGuid();
+            // For demo: assign next available int ID
+            category.CategoryId = _context.Categories.Any() ? _context.Categories.Max(c => c.CategoryId) + 1 : 1;
             _context.Categories.Add(category);
             await _context.SaveChangesAsync();
             return Ok(category);
@@ -194,7 +247,7 @@ namespace ProductService.Controllers
 
         [Microsoft.AspNetCore.Authorization.Authorize(Roles = "Admin")]
         [HttpPut("categories/{id}")]
-        public async Task<IActionResult> UpdateCategory(Guid id, [FromBody] Category updated)
+        public async Task<IActionResult> UpdateCategory(int id, [FromBody] Category updated)
         {
             var category = await _context.Categories.FindAsync(id);
             if (category == null) return NotFound();

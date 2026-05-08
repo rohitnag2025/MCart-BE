@@ -7,6 +7,7 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
+builder.Services.AddSingleton<ProductService.AzureBlobService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<ProductDbContext>(options =>
@@ -34,6 +35,7 @@ using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<ProductDbContext>();
     db.Database.Migrate();
+    ProductService.Models.SeedData.Initialize(db);
 }
 
 app.UseSwagger();

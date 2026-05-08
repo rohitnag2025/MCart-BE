@@ -10,11 +10,12 @@ namespace ProductService.Models
         [Required]
         public string Name { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
-        public Guid CategoryId { get; set; }
+        public int CategoryId { get; set; }
         public decimal Price { get; set; }
         public decimal Discount { get; set; }
         public int Stock { get; set; }
-        public string ImageUrl { get; set; } = string.Empty;
+        // Stores only the blob name (not a URL)
+        public string ImageBlobName { get; set; } = string.Empty;
         public string Tags { get; set; } = string.Empty;
         public bool IsFeatured { get; set; }
         public bool IsNew { get; set; }
@@ -22,13 +23,4 @@ namespace ProductService.Models
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 
-    public class Category
-    {
-        [Key]
-        public Guid CategoryId { get; set; }
-        [Required]
-        public string Name { get; set; } = string.Empty;
-        public Guid? ParentId { get; set; }
-        public string Gender { get; set; } = string.Empty; // Men, Women, Unisex
-    }
 }

@@ -1,0 +1,348 @@
+SRS
+----------
+Contents
+1. Feature ............................................................................................................................. 2
+2. Functional Requirement Overview...................................................................................... 3
+3. Login................................................................................................................................. 3
+4. Register ............................................................................................................................ 4
+5. Administrator Page ............................................................................................................ 4
+6. Purchase Flow for users ..................................................................................................... 6
+7. Order Complete............................................................................................................... 11
+8. Search............................................................................................................................. 12
+9. Product Catalogue ........................................................................................................... 12
+10. Product .......................................................................................................................... 15
+11. Stock .............................................................................................................................. 16
+12. Price............................................................................................................................... 16
+13. Email .............................................................................................................................. 17
+14. Sale ................................................................................................................................ 19
+15. Order History .................................................................................................................. 20
+16. Customer ....................................................................................................................... 21
+17. Contact Us Page .............................................................................................................. 22
+18. Review Page ................................................................................................................... 23
+19. New Products ................................................................................................................. 24
+20. Our Testimonials ............................................................................................................. 25
+21. Non-Functional Requirements ......................................................................................... 26
+Secure Socket Layer (SSL)........................................................................................................ 26
+1. Feature
+1.1. When setting up an e-commerce site there are many features to think off to have on your site, below are few must have features to really ensure that your site is fully equipped for online sales.
+1.2. Search Box: Having a search box positioned well, will allow your visitors to quickly search for the product that they are looking for.
+1.3. Featured Products: By displaying featured products on your home page or on the side columns of your site will inform your visitors of top selling products, sales offer or it can be a general product that you want to push further and make sure they get noticed.
+1.4. Related product: This is a great up selling feature, which will show your visitors what other products they can purchase alongside what they are currently viewing.
+1.5. Newsletter Subscription: Allow users to enter their email address to stay up to date with site offers and promotions, having this feature will allow you to build your mailing list for you to use in marketing campaigns.
+1.6. Product Zoom: Having a good zoom feature for your product images, is always a plus point online, as it allows visitors to see the minute details of your products, which works well, as some times customers prefer to feel and touch, so you can easily replace this by having a good zoom feature, which really brings out the details in your product.
+1.7. Categories: Have clear categories on your site to list your products into, and have your categories displayed somewhere easy to access, e.g. across the top or on the side columns.
+1.8. Good Navigation: Navigation is extremely important on an e-commence site, users should be able to easily access various sections of the site, along with a quick link back to the shopping cart.
+1.9. Good Payment Gateway: Choosing the perfect payment gateway solution for you site will give assurance and peace of mind to your visitors. Choose a merchant account that your visitors are comfortable with.
+1.10. Privacy Policy: Display clear Privacy Policy link in your footer.
+1.11. Good Return Policy: When buyers see a good return policy they will have more assurance and peace of mind if ever something was to go wrong they can easily return their product. A good policy generally increases sales, as customers feel safe to buy.
+1.12. Customer login & registration: Give the option for customers to register on your site, so when they do return they don’t need to enter all their billing and payment details in again, giving them the flexibility to quickly check out.
+1.13. Good Graphics: Make good use of graphics banners and images on the site, to attract visitors, also display your sales promotions, offers in attractive banners on the site for users to click on to.
+1.14. Delivery Information: Always inform how you’re going to be delivering your products to the customers, along with clear time scales, so that your customers know when to expect the delivery.
+1.15. News & Events: This section on the site where you can keep your visitors informed of new products, events, and other news related to your online business. Using a blogging platform or a module does this job perfectly.
+1.16. Social Media Presence: Let your customers know that your available on networking sites, by having Social Media Logos on your site, some companies use networking sites as their customer support systems, interacting with their customers for enquires related to their orders. On the other hand, some online retailers are only available to contact via networking platforms. Having a good social media presence will boost your online presence and brand.
+2. Functional Requirement Overview
+This section provides requirement overview of the AmCart application. The objective is to design online clothes shopping website for women and men. Various functional modules that will be implemented by the system will be -
+• Login: Customer log -in in to the system by entering valid user id and password for the shopping.
+• Registration: Customer needs to be registered to log-in in to the application and buy products Although unregistered user can skip registration and continue browsing products as a guest.
+• Administrator Page: The administrator should be able to add, update and remove items.
+• Search or choose product: Customers should be able to search products.
+• Product Catalog: This should display list of products available on site for shopping.
+• Sale: The products available in this section will have special discount offers.
+• Stock: Site should be able to check the availability of products.
+• Price: System should keep check on displayed price.
+• Apply filter: Sorting of products on basis of availability, price, rating, colour and brand should be possible.
+• Add to cart: Direct functionality of adding product to cart should be possible.
+• Payment: For customer there are many type of secure billing will be direct bank transfer, check or bank draft. The security will provide by the third party like Pay-Pal etc.
+• Order Confirmation: After the payment or surf the product the customer will logged out and an email will be send to him.
+• Others: Order History, Customer, Review Page, New Products, Testimonials, Contact Us page are the pages that will be designed.
+• Reference Site Link: http://preview.themeforest.net/item/shop-ecommerce-html-shop/full_screen_preview/16084588
+3. Login
+User shall login with existing valid credentials of MCart or he/she should be able to login using Facebook or twitter.
+Business Rules:
+3.1. Email shall be in correct format: abc@xyz.com format.
+3.2. Both Email and Password fields are mandatory fields.
+3.3. Clicking on ‘Remember me’, system shall not ask for Login details the next time the user tries to login.
+3.4. Clicking on ‘Forget your password?’ link shall redirect user to the ‘Forget Password’ Screen.
+4. Register
+In case user is a new user, he shall register to the website by entering valid gender, email, password and mobile number in the respective fields and clicking ‘Register’ button.
+5. Administrator Page
+Only Administrators will be able to access this page.
+5.1. Role of Administrator:
+Administrator will be able to add, remove and upload items on the application. Please refer Product Catalogue section to know what products Admin can update in the system.
+Administrator can add, remove or edit products on the product page.
+There will be Add/Delete Product page for administrator to add/delete items in the online site:
+The fields that indicate the above use case can be:
+• Unique Product Number- System Generated
+• Colour
+• Size
+• Price
+• Quantity to be added
+• Discount Offer
+The system should auto update product catalog if administrator is updating items using above Add Items form page. There should be Submit button on both the pages and Cancel button.
+There will be Out of Stock page/form for administrator that will be auto populated by system and indicate number of items left stock in Red.
+The fields that indicate the above use case can be:
+• Unique Product Number
+• Colour
+• Size
+• Price
+• Quantity left
+5.2. Role of Visitors/ Customers:
+They will be buying products available in MCart application. Please refer the purchase flow in the below section of this document.
+The following diagram illustrates the tasks performed on application by Manager and Customer
+6. Purchase Flow for users
+At Home Screen, User can Click on any Product Category he wishes to purchase.
+As hovers on any of the Product image, pop up will appear that contains 4 options:
+Business Rules:
+6.1. Add to Cart: Shall add the selected Product to the purchase Cart.
+6.2. Quick View: Shall let user to see the details and specifications of the selected product.
+6.3. Compare: Shall let the product to be added in the ‘Compare’ section to compare the
+Product feature wise with other selected products for comparison.
+Business Rules:
+6.4. Add to Wish list: Shall add the product to the ‘Wish list’ so that this can be saved and mapped to the logged in user account for purchase at a later point in time.
+6.5. Application will request user to login or purchase as guest at the time of payment.
+Business Rules:
+6.6. Subtotal amount shall be the multiple of Price and Quantity for each of the Product.
+6.7. Cart Subtotal shall be the added amount for each product subtotal.
+6.8. If user has appropriate ‘Coupon code’, the code can be entered in ‘Enter coupon’ text box and
+clicked on ‘Apply’ button to apply the coupon code.
+6.9. As the valid coupon code is applied, the Order Total should be updated with appropriate
+discounts.
+6.10. As user clicks on ‘+’ or ‘- ‘under Quantity column for any corresponding Product, the Subtotal
+and ‘Cart subtotal’ should update appropriately.
+6.11. Checkout shall be possible through two options-:
+6.12. Click on ‘Login’ button to log into the application and the proceed to checkout.
+6.13. Click on ‘Continue’ button to proceed to checkout without login.
+6.14. User will land to ‘Billing & Shipping’ screen to add the details of billing and address of shipping.
+Business Rules:
+6.15. All fields except ‘Company’ are mandatory fields.
+6.16. Email Address and Postcode/zip fields shall restrict the entry to the appropriate format.
+6.17. System shall not ask for ‘Shipping Address’ if Checkbox for ‘My delivery and billing addresses
+are the same’ is checked.
+Business Rules:
+6.18. All fields except ‘Company’ are mandatory fields.
+6.19. Email Address and Postcode/zip fields shall restrict the entry to the appropriate format.
+6.20. Next screen shall be the ‘Payment Method’ screen. User shall choose the method to pay
+for the items to be purchased.
+6.21. Any one Payment method must be entered before clicking on ‘Place Order’ button.
+6.22. The possible methods shall be: Direct Bank Transfer, Cheque payment and PayPal.
+6.23. User shall finally Click on ‘Place Order’ Button to submit the order details.
+7. Order Complete
+Business Rules:
+7.1. As user reaches to the final step of Product purchase and as the Payment is successful,
+the above page shall be displayed to the user.
+7.2. The page contains the details of the current purchase in terms of Product, price,
+Cart, Subtotal, Shipping details and Order Total.
+7.3. The right panel of the screen contains the particulars for Customer Details,
+Billing, Address and Shipping Address.
+8. Search
+Business Rules:
+8.1. Any string shall be searched through ‘Search’ text box.
+8.2. The Search results shall be displayed in the same page in a list format.
+8.3. Information message shall be displayed in case the Search string is invalid/ not found.
+8.4. Validation message shall be displayed in case user clicks on Search icon without entering any
+string in the Search text box.
+9. Product Catalogue
+MCart will have only two categories women or men for shopping.
+Women
+Indian & Western Wear
+• Kurtas & Suits
+• Kurtis & Tunics
+• Leggings, Salwars & Churidars
+• Skirts & Palazzos
+• Sarees & Blouses
+• Dress Material
+• Lehenga Choli
+• Dupattas & Shawls
+Western Wear
+• Dresses & Jumpsuits
+• Tops, T-Shirts & Shirts
+• Jeans & Jeggings
+• Trousers & Capris
+• Shorts & Skirts
+• Shrugs
+• Sweaters & Sweatshirts
+• Jackets & Waistcoats
+• Coats & Blazers
+Accessories
+• Women Watches
+• Analog
+• Chronograph
+• Digital
+• Analog & Digital
+• Sunglasses
+• Eye Glasses
+• Belt
+Men
+Clothing
+• T-Shirts
+• Casual Shirts
+• Formal Shirts
+• Suits
+• Jeans
+• Casual Trousers
+• Formal Trousers
+• Shorts
+• Track Pants
+• Sweaters & Sweatshirts
+• Jackets
+• Blazers & Coats
+• Sports & Active Wear
+• Indian & Festive Wear
+• Innerwear & Sleepwear
+ACCESSORIES
+• Watches & Wearables
+• Sunglasses & Frames
+• Bags & Backpacks
+• Luggage & Trolleys
+• Personal Care & Grooming
+• Wallets & Belts
+• Fashion Accessories
+Business Rules:
+9.1. Clicking on Category Page link directs user to the category page.
+9.2. The Categories of products shall be displayed as a list of links in bulleted format.
+9.3. As user clicks a product category, the tree view expands to show the Product subcategory.
+9.4. Clicking on any Product subcategory links shall direct user to the corresponding page of
+that product category.
+9.5. There will be sort filter for products with drop down list having options Default
+sorting, Price, Rating and Popularity.
+9.6. User shall able to filter on the basis of Price, Colour, Brands and Product Tags.
+10. Product
+Business Rules:
+10.1. Product page shall display a particular type of item selected from previous choice.
+10.2. Along with Product images, the page shall display the appropriate features,
+price, Availability, quantity selection, add to Cart, Share Product on the applications
+as indicates by icons and Print options.
+10.3. Clicking on 'Back in Cataog' Button directs user to Catalog page.
+10.4. Next (">") and Previous ("<") buttons shall enable user to view other available item
+options under the same product category.
+11. Stock
+Business Rules:
+11.1. Only the Products that are in stock can be sold or purchased.
+11.2. Products that are out of stock are not available to buy in a store.
+11.3. User shall be notified by email if item be made available in the future.
+11.4. Only those users will be send an email who added the product to wish list.
+11.5. Green dot shall be displayed on the left side of ‘In Stock’ for the item that
+are available for purchase.
+11.6. Red dot shall be displayed on the left side of ‘Out of Stock’ for the item that
+are not available for purchase.
+12. Price
+Business Rules:
+12.1. The Final price to be displayed along with each item for each Product category
+shall remain same throughout the purchase lifecycle.
+12.2. The Price shall be displayed in $ currency in the application.
+12.3. All discounts, coupons, promotional offers shall be applicable for the same
+currency that is currently configured.
+12.4. Changed price displayed on products when browsing a catalog is applicable for as
+long as the rule is active. For example, a rule could be “All products in Category X are
+on Sale for Y% off till 20th July 2016 or as the Stock lasts”.
+12.5. Price changes based on the items in a user’s cart. These rules don’t activate until all
+conditions have been met. For example, “if purchasing from category X and category Y,
+offer Z discount”.
+13. Email
+Following is the format of the Email that shall be send to the User automatically by the System as the product is successfully purchased.
+
+14. Sale
+User shall Click on ‘Sale’ option on the top menu bar to land on the Sale page.
+The page shall contain the Category wise details on Products available on sale along with the
+discounted price.
+Business Rules:
+14.1. Selecting discounted item will be possible only through ‘Sales’ screen. The discounted
+price is reflected everywhere including to Cart, Compare, Quick view and Wish list.
+14.2. Discounted price shall be applicable to any number of items of same category for
+the purchase.
+14.3. For example, a men’s T-shirt selected with 20% discount shall have the same
+discount available if user selects 5 T-shirts of the same category.
+14.4. Items for which ‘Sales’ is removed or Sales expired, shall not be available any more on
+the Sales page and shall be purchased with normal price only.
+15. Order History
+Order History page contains the details of the Last Purchase made through the web site.
+Business Rules:
+15.1. This page can be accessed only when user is logged in with valid credentials.
+15.2. The top section of the page contains the picture of user (if already uploaded),
+Welcome message, order details and 'View Cart' button.
+15.3. The next section of the page right below the above section displays the Order
+History with Product image, Product Name, Order Number, Status, Ship Date
+and Price details.
+15.4. The lower section contains Shipment details and Total Amount user paid for
+the purchase.
+15.5. The right panel on the screen contains the links for 'Your Profile', 'Wish list'
+and 'History'.
+16. Customer
+Business Rules:
+16.1. User clicks on 'Account Page' link to reach to the Customer page.
+16.2. Customer shall enter and Save profile specific information in this page.
+16.3. All mandatory fields to be appropriately filled up before user clicks 'Save Settings' button.
+16.4. Email, Phone Number, Zip code fields to be filled in appropriate format only.
+16.5. User specific details for 'Wish list’, ‘History' and 'View Cart' to be maintained and can
+be viewed anytime user login with valid credentials.
+17. Contact Us Page
+Contact Us page contains the map, details, of Contact Person, Contact Details
+section contains Phone number and Email Id.
+Business Rules:
+17.1. The lower section of the page contains the edit form for ‘Leave A Reply’.
+17.2. Fields ‘Name’, ‘Email’ and ‘Enter your subject’ and ‘Your Comment’ are mandatory fields.
+17.3. Email field shall contain the relevant format of a valid Email, i.e abc@xyz.com .
+18. Review Page
+Business Rules:
+18.1. The Review page shall contain the Review comments of the existing customers
+who have purchased products in past from the web site.
+18.2. The page shall contain the picture of customer (if already uploaded), name of
+customer, date and time of review, review comments and likes/dislikes for
+those comments.
+18.3. The reviews of customers shall be displayed in a list format with pagination.
+19. New Products
+Business Rules:
+19.1. New Products section shall contain the details of New Products that site just added a
+while ago.
+19.2. The Products shall be arranged in an array with Product picture, price and title of the
+product.
+19.3. Mouse hover on any Product image shall display popup for ‘Add to Cart’, ‘Quick View’,
+’Compare’ and ‘Add to Wish list’.
+20. Our Testimonials
+Business Rules:
+20.1. Our Testimonials section shall contain the Customer quotes, testimonials about general
+experience of the application, product purchase etc.
+20.2. ‘What Our Clients Say’ section shall contain the Customer picture (if already uploaded)
+and Customer comments.
+20.3. ‘Our Brand’ section contains the details of the Brands available under the web site.
+20.4. The left arrow (“>”) and the right arrow (“<”) buttons shall be available for browsing
+further on the above two sub sections.
+Business Rules:
+20.5. Most Popular Sub section contains the Product picture, Product title and cost of
+those products which are most popular under the web site. These Products are
+purchased/liked by most customers.
+20.6. The lower mid-sub section of the page contains the Customer comments for the
+corresponding Most Popular Products.
+20.7. The lower -right sub section contains ‘Get in Touch with Us’ details.
+21. Non-Functional Requirements
+Security
+Security is an essential part of any transaction that takes place over the internet. Customer will lose his/her faith in e-business if its security is compromised. Following are the essential requirements for safe e-payments/transactions –
+Major security measures are following −
+• The system must automatically log out all customers after a period of inactivity.
+• The system should not leave any cookies on the customer’s computer containing the user’s password.
+• The system’s back-end servers shall only be accessible to authenticated administrators.
+• Sensitive data will be encrypted before being sent over insecure connections like the internet.
+Secure Socket Layer (SSL)
+It is the most commonly used protocol and is widely used across the industry. It meets following security requirements −
+• Authentication
+• Encryption
+• Integrity
+• Non-reputability
+"https://" is to be used for HTTP urls with SSL, where as "http:/" is to be used for HTTP urls without SSL.
+Reliability
+The system provides storage of all databases on redundant computers with automatic switchover.
+The reliability of the overall program depends on the reliability of the separate components. The main pillar of reliability of the system is the backup of the database which is continuously maintained and updated to reflect the most recent changes.
+Thus the overall stability of the system depends on the stability of container and its underlying operating system.
+Availability
+The system should be available at all times, meaning the user can access it using a web browser, only restricted by the down time of the server on which the system runs. In case of a of a hardware failure or database corruption, a replacement page will be shown. Also in case of a hardware failure or database corruption, backups of the database should be retrieved from the server and saved by the administrator. Then the service will be restarted. It means 24 X 7 availability.
+Maintainability
+A commercial database is used for maintaining the database and the application server takes care of the site. In case of a failure, a re-initialization of the program will be done. Also the software design is being done with modularity in mind so that maintainability can be done efficiently.
+Portability
+The application is HTML and scripting language based. So The end-user part is fully portable and any system using any web browser should be able to use the features of the system, including any hardware platform that is available or will be available in the future.
+An end-user is use this system on any OS; either it is Windows or Linux.
+The system shall run on PC, Laptops, and PDA etc.
+Operational Scenario
+The customer wants to buy item. The system shows all product categories to customer. If customer select item, then they listed in shopping cart for buying.
+The payment will be direct bank transfer, PayPal or bank check. If customer wants to cancel the order before shipping, then he or she can cancel it.
+Customer can see the buying report on account detail.
+----------------------------------------

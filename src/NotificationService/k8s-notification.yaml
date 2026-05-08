@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notificationservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: notificationservice
+  template:
+    metadata:
+      labels:
+        app: notificationservice
+    spec:
+      containers:
+      - name: notificationservice
+        image: notificationservice:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: "Production"
+        - name: ConnectionStrings__DefaultConnection
+          valueFrom:
+            secretKeyRef:
+              name: notification-sql-secret
+              key: connection-string
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: notificationservice
+spec:
+  selector:
+    app: notificationservice
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80

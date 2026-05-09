@@ -4,6 +4,18 @@ using Stripe;
 using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
+// Add CORS policy configurable for dev and cloud
+var allowedOrigins = builder.Configuration["Cors:AllowedOrigins"] ?? Environment.GetEnvironmentVariable("CORS_ALLOWED_ORIGINS") ?? "http://localhost:4200";
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularDev",
+        policy => policy
+            .WithOrigins(allowedOrigins.Split(';', StringSplitOptions.RemoveEmptyEntries))
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()
+    );
+});
 
 // Azure Key Vault integration
 var keyVaultEnabled = builder.Configuration.GetValue<bool>("KeyVault:Enabled");
@@ -34,6 +46,8 @@ app.UseSwagger();
 app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
+// Use CORS before authentication/authorization
+app.UseCors("AllowAngularDev");
 app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();

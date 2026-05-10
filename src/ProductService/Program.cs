@@ -26,6 +26,8 @@ builder.Services.AddDbContext<ProductDbContext>(options =>
 {
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
+    builder.Services.AddSingleton<ProductService.Services.InventoryEventPublisher>();
+    builder.Services.AddHostedService<ProductService.Services.InventoryEventConsumer>();
 
 var jwtSecret = builder.Configuration["Jwt:Secret"] ?? throw new InvalidOperationException("Jwt:Secret is not configured.");
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)

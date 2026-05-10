@@ -5,7 +5,10 @@ using Azure.Identity;
 
 var builder = WebApplication.CreateBuilder(args);
 // Add CORS policy configurable for dev and cloud
-var allowedOrigins = builder.Configuration["Cors:AllowedOrigins"] ?? Environment.GetEnvironmentVariable("CORS_ALLOWED_ORIGINS") ?? "http://localhost:4200";
+var allowedOrigins = Environment.GetEnvironmentVariable("CORS_ALLOWED_ORIGINS") ??
+                     builder.Configuration["Cors:AllowedOrigins"] ??
+                     builder.Configuration["FRONTEND_URL"] ??
+                     "http://localhost:4200";
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAngularDev",
@@ -17,7 +20,8 @@ builder.Services.AddCors(options =>
     );
 });
 
-// Azure Key Vault integration
+
+// Azure Key Vault integration (optional, keep as is)
 var keyVaultEnabled = builder.Configuration.GetValue<bool>("KeyVault:Enabled");
 if (keyVaultEnabled)
 {
@@ -25,22 +29,35 @@ if (keyVaultEnabled)
     builder.Configuration.AddAzureKeyVault(new Uri(vaultUri), new DefaultAzureCredential());
 }
 
-StripeConfiguration.ApiKey = builder.Configuration["Stripe:ApiKey"];
+// Stripe API Key from env
+StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("STRIPE_API_KEY") ?? builder.Configuration["Stripe:ApiKey"];
 
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Use SQL Server connection string from env
+var sqlConnectionString = Environment.GetEnvironmentVariable("SQLSERVER_CONNECTION_STRING")
+    ?? builder.Configuration.GetConnectionString("DefaultConnection");
 builder.Services.AddDbContext<OrderDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+    options.UseSqlServer(sqlConnectionString));
 
 builder.Services.AddAuthentication("Bearer")
     .AddJwtBearer();
 
+
 builder.Services.AddSingleton<OrderService.Services.OrderEventPublisher>();
+builder.Services.AddHostedService<OrderService.Services.PaymentEventConsumer>();
+builder.Services.AddSingleton<OrderService.Services.InventoryEventPublisher>();
 
 var app = builder.Build();
 
-
+// Ensure database is created and migrations are applied
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
+    db.Database.Migrate();
+}
 
 app.UseSwagger();
 app.UseSwaggerUI();

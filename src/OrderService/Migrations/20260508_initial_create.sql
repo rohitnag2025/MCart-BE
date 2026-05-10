@@ -1,0 +1,57 @@
+-- Initial migration script for OrderService
+
+CREATE TABLE [Orders] (
+    [OrderId] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+    [UserId] UNIQUEIDENTIFIER NOT NULL,
+    [Status] NVARCHAR(50) NOT NULL,
+    [TotalAmount] DECIMAL(18,2) NOT NULL,
+    [PaymentMethod] NVARCHAR(100) NOT NULL,
+    [ShippingAddress] NVARCHAR(MAX) NOT NULL,
+    [BillingAddress] NVARCHAR(MAX) NOT NULL,
+    [CreatedAt] DATETIME2 NOT NULL,
+    [CouponCode] NVARCHAR(100) NULL,
+    [Discount] DECIMAL(18,2) NOT NULL
+);
+
+CREATE TABLE [OrderItems] (
+    [OrderItemId] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+    [OrderId] UNIQUEIDENTIFIER NOT NULL,
+    [ProductId] UNIQUEIDENTIFIER NOT NULL,
+    [ProductName] NVARCHAR(255) NOT NULL,
+    [Quantity] INT NOT NULL,
+    [Price] DECIMAL(18,2) NOT NULL,
+    [Discount] DECIMAL(18,2) NOT NULL,
+    FOREIGN KEY ([OrderId]) REFERENCES [Orders]([OrderId])
+);
+
+CREATE TABLE [Wishlists] (
+    [WishlistId] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+    [UserId] UNIQUEIDENTIFIER NOT NULL,
+    [ProductId] UNIQUEIDENTIFIER NOT NULL,
+    [CreatedAt] DATETIME2 NOT NULL
+);
+
+CREATE TABLE [Coupons] (
+    [CouponId] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+    [Code] NVARCHAR(100) NOT NULL,
+    [Discount] DECIMAL(18,2) NOT NULL,
+    [Expiry] DATETIME2 NOT NULL,
+    [IsActive] BIT NOT NULL
+);
+
+CREATE TABLE [Carts] (
+    [CartId] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+    [UserId] UNIQUEIDENTIFIER NOT NULL,
+    [CreatedAt] DATETIME2 NOT NULL
+);
+
+CREATE TABLE [CartItems] (
+    [CartItemId] UNIQUEIDENTIFIER NOT NULL PRIMARY KEY,
+    [CartId] UNIQUEIDENTIFIER NOT NULL,
+    [ProductId] UNIQUEIDENTIFIER NOT NULL,
+    [ProductName] NVARCHAR(255) NOT NULL,
+    [Quantity] INT NOT NULL,
+    [Price] DECIMAL(18,2) NOT NULL,
+    [Discount] DECIMAL(18,2) NOT NULL,
+    FOREIGN KEY ([CartId]) REFERENCES [Carts]([CartId])
+);

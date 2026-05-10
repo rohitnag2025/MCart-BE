@@ -4,6 +4,28 @@ using System.ComponentModel.DataAnnotations;
 
 namespace OrderService.Models
 {
+    public class Cart
+    {
+        [Key]
+        public Guid CartId { get; set; }
+        public Guid UserId { get; set; }
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        public ICollection<CartItem> Items { get; set; } = new List<CartItem>();
+    }
+
+    public class CartItem
+    {
+        [Key]
+        public Guid CartItemId { get; set; }
+        public Guid CartId { get; set; }
+        public Guid? UserId { get; set; } // Nullable for guest carts
+        public Guid ProductId { get; set; }
+        public string ProductName { get; set; } = string.Empty;
+        public int Quantity { get; set; }
+        public decimal Price { get; set; }
+        public decimal Discount { get; set; }
+    }
+
     public class Order
     {
         [Key]

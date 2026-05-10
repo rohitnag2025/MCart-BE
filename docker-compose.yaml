@@ -35,6 +35,8 @@ services:
       - ConnectionStrings__DefaultConnection=${SQLSERVER_CONNECTION_STRING}
       - Jwt__Secret=${JWT_SECRET}
       - ASPNETCORE_ENVIRONMENT=Production
+      - ServiceBus__ConnectionString=${SERVICEBUS_CONNECTION_STRING}
+      - ServiceBus__QueueName=${SERVICEBUS_QUEUE_NAME}
     depends_on:
       - db
     ports:

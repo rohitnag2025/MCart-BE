@@ -13,10 +13,54 @@ namespace PaymentService.Controllers
     public class PaymentsController : ControllerBase
     {
         private readonly PaymentDbContext _context;
-        public PaymentsController(PaymentDbContext context)
+        private readonly IConfiguration _config;
+        public PaymentsController(PaymentDbContext context, IConfiguration config)
         {
             _context = context;
+            _config = config;
         }
+        [HttpPost("create-checkout-session")]
+        public async Task<IActionResult> CreateCheckoutSession([FromBody] CreateCheckoutSessionRequest request)
+        {
+            var stripeApiKey = _config["Stripe:ApiKey"];
+            StripeConfiguration.ApiKey = stripeApiKey;
+
+            var options = new SessionCreateOptions
+            {
+                PaymentMethodTypes = new List<string> { "card" },
+                LineItems = new List<SessionLineItemOptions>
+                {
+                    new SessionLineItemOptions
+                    {
+                        PriceData = new SessionLineItemPriceDataOptions
+                        {
+                            Currency = request.Currency,
+                            UnitAmount = (long)(request.Amount * 100), // amount in cents
+                            ProductData = new SessionLineItemPriceDataProductDataOptions
+                            {
+                                Name = request.ProductName
+                            }
+                        },
+                        Quantity = 1
+                    }
+                },
+                Mode = "payment",
+                SuccessUrl = request.SuccessUrl,
+                CancelUrl = request.CancelUrl
+            };
+
+            var service = new SessionService();
+            Session session = await service.CreateAsync(options);
+            return Ok(new { sessionId = session.Id, url = session.Url });
+        }
+    public class CreateCheckoutSessionRequest
+    {
+        public decimal Amount { get; set; }
+        public string Currency { get; set; }
+        public string ProductName { get; set; }
+        public string SuccessUrl { get; set; }
+        public string CancelUrl { get; set; }
+    }
 
         [HttpGet("order/{orderId}")]
         public async Task<IActionResult> GetPaymentByOrderId(Guid orderId)
@@ -38,7 +82,7 @@ namespace PaymentService.Controllers
         public async Task<IActionResult> StripeWebhook()
         {
             var json = await new System.IO.StreamReader(HttpContext.Request.Body).ReadToEndAsync();
-            var secret = Environment.GetEnvironmentVariable("STRIPE_WEBHOOK_SECRET");
+            var secret = _config["Stripe:WebhookSecret"];
             Event stripeEvent;
             try
             {

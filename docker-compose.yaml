@@ -1,5 +1,6 @@
 version: '3.8'
 services:
+  
   db:
     image: mcr.microsoft.com/mssql/server:2022-latest
     container_name: mcart-sqlserver
@@ -57,7 +58,27 @@ services:
       - db
     ports:
       - "5003:8080"
-
+  paymentservice:
+    build:
+      context: ./src/PaymentService
+    environment:
+      - ConnectionStrings__DefaultConnection=${SQLSERVER_CONNECTION_STRING}
+      - Jwt__Secret=${JWT_SECRET}
+      - ASPNETCORE_ENVIRONMENT=Production
+      - STRIPE_API_KEY=${STRIPE_API_KEY}
+      - STRIPE_WEBHOOK_SECRET=${STRIPE_WEBHOOK_SECRET}
+    depends_on:
+      - db
+    ports:
+      - "5007:8080"
+  stripecli:
+    image: stripe/stripe-cli:latest
+    command: listen --forward-to paymentservice:80/api/payments/webhook
+    environment:
+      - STRIPE_API_KEY=${STRIPE_API_KEY}
+      - STRIPE_DEVICE_NAME=docker
+    depends_on:
+      - paymentservice
   adminservice:
     build:
       context: ./src/AdminService

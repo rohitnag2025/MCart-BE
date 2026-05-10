@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using UserService.Models;
 
 namespace UserService.Controllers
@@ -22,22 +23,47 @@ namespace UserService.Controllers
         {
             var redirectUrl = Url.Action("ExternalLoginCallback", "Users", new { returnUrl });
             var properties = new Microsoft.AspNetCore.Authentication.AuthenticationProperties { RedirectUri = redirectUrl };
-            return Challenge(properties, provider);
+            // Always use 'Twitter' (capital T) as the provider to match the registered scheme
+            var scheme = provider.Equals("Twitter", StringComparison.OrdinalIgnoreCase) ? "Twitter" : provider;
+            return Challenge(properties, scheme);
         }
 
+        [AllowAnonymous]
         [HttpGet("external-login-callback")]
         public async Task<IActionResult> ExternalLoginCallback(string returnUrl = "/")
         {
             var authenticateResult = await HttpContext.AuthenticateAsync();
+            Console.WriteLine($"[DEBUG] ExternalLoginCallback: authenticateResult.Succeeded = {authenticateResult.Succeeded}");
             if (!authenticateResult.Succeeded)
+            {
+                Console.WriteLine($"[DEBUG] ExternalLoginCallback: Failure = {authenticateResult.Failure}");
+                if (authenticateResult.Failure != null)
+                {
+                    Console.WriteLine($"[DEBUG] Failure Message: {authenticateResult.Failure.Message}");
+                    if (authenticateResult.Failure.InnerException != null)
+                        Console.WriteLine($"[DEBUG] Inner Exception: {authenticateResult.Failure.InnerException.Message}");
+                }
                 return Unauthorized();
+            }
+
+            // Log all claims for debugging
+            if (authenticateResult.Principal != null)
+            {
+                foreach (var claim in authenticateResult.Principal.Claims)
+                {
+                    Console.WriteLine($"[DEBUG] Claim: {claim.Type} = {claim.Value}");
+                }
+            }
 
             var email = authenticateResult.Principal?.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
             var provider = authenticateResult.Properties?.Items[".AuthScheme"];
             var providerUserId = authenticateResult.Principal?.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
             if (string.IsNullOrEmpty(email))
+            {
+                Console.WriteLine("[DEBUG] Email not received from provider");
                 return BadRequest("Email not received from provider");
+            }
 
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == email);
             if (user == null)
@@ -58,7 +84,22 @@ namespace UserService.Controllers
             }
             var jwtSecret = _config["Jwt:Secret"];
             var token = UserService.Helpers.JwtHelper.GenerateJwtToken(user.UserId.ToString(), user.Email, user.Role, jwtSecret);
-            return Ok(new { token, user });
+            // Redirect to frontend with token and user info
+            var userJson = System.Text.Json.JsonSerializer.Serialize(new {
+                userId = user.UserId,
+                email = user.Email,
+                name = user.Name
+            });
+            Console.WriteLine($"[DEBUG] User authenticated via {provider}: {email}");
+            Console.WriteLine($"[DEBUG] Generated JWT token: {token}");
+            Console.WriteLine($"[DEBUG] User info JSON: {userJson}");
+            Console.WriteLine($"[DEBUG] Redirecting to frontend with token: {token} and user: {userJson}");
+            Console.WriteLine($"[DEBUG] Frontend callback URL: {_config["Frontend:SocialCallbackUrl"]}");
+            Console.WriteLine($"[DEBUG] Default frontend callback URL: http://127.0.0.1:4200/auth/social-callback");
+            // Get frontend callback base URL from config or use default
+            var frontendCallbackBase = _config["Frontend:SocialCallbackUrl"] ?? "http://127.0.0.1:4200/auth/social-callback";
+            var redirectUrlWithParams = $"{frontendCallbackBase}?token={Uri.EscapeDataString(token)}&user={Uri.EscapeDataString(userJson)}";
+            return Redirect(redirectUrlWithParams);
         }
 
         [HttpPost("register")]

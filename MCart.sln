@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 17
-VisualStudioVersion = 17.0.31903.59
+# Visual Studio Version 18
+VisualStudioVersion = 18.1.11312.151 d18.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{827E0CD3-B72D-47B6-A68D-7590B98EB39B}"
 EndProject
@@ -18,6 +18,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService", "src\NotificationService\NotificationService.csproj", "{DBD3CE03-D2D4-4516-8D0C-D4CA29D9FA94}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ApiGateway", "src\ApiGateway\ApiGateway.csproj", "{4397A9BB-9490-48EB-9D6A-04B585DA26FD}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PaymentService", "src\PaymentService\PaymentService.csproj", "{6E50567F-C95D-2CB6-19C7-1A0AFF32FD57}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -113,6 +115,18 @@ Global
 		{4397A9BB-9490-48EB-9D6A-04B585DA26FD}.Release|x64.Build.0 = Release|Any CPU
 		{4397A9BB-9490-48EB-9D6A-04B585DA26FD}.Release|x86.ActiveCfg = Release|Any CPU
 		{4397A9BB-9490-48EB-9D6A-04B585DA26FD}.Release|x86.Build.0 = Release|Any CPU
+		{6E50567F-C95D-2CB6-19C7-1A0AFF32FD57}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6E50567F-C95D-2CB6-19C7-1A0AFF32FD57}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6E50567F-C95D-2CB6-19C7-1A0AFF32FD57}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{6E50567F-C95D-2CB6-19C7-1A0AFF32FD57}.Debug|x64.Build.0 = Debug|Any CPU
+		{6E50567F-C95D-2CB6-19C7-1A0AFF32FD57}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{6E50567F-C95D-2CB6-19C7-1A0AFF32FD57}.Debug|x86.Build.0 = Debug|Any CPU
+		{6E50567F-C95D-2CB6-19C7-1A0AFF32FD57}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6E50567F-C95D-2CB6-19C7-1A0AFF32FD57}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6E50567F-C95D-2CB6-19C7-1A0AFF32FD57}.Release|x64.ActiveCfg = Release|Any CPU
+		{6E50567F-C95D-2CB6-19C7-1A0AFF32FD57}.Release|x64.Build.0 = Release|Any CPU
+		{6E50567F-C95D-2CB6-19C7-1A0AFF32FD57}.Release|x86.ActiveCfg = Release|Any CPU
+		{6E50567F-C95D-2CB6-19C7-1A0AFF32FD57}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -125,5 +139,6 @@ Global
 		{45A774BB-BBB5-4B8A-A4A4-05266340E2DF} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{DBD3CE03-D2D4-4516-8D0C-D4CA29D9FA94} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 		{4397A9BB-9490-48EB-9D6A-04B585DA26FD} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
+		{6E50567F-C95D-2CB6-19C7-1A0AFF32FD57} = {827E0CD3-B72D-47B6-A68D-7590B98EB39B}
 	EndGlobalSection
 EndGlobal

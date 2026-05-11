@@ -1,12 +1,12 @@
+using System;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
 using Azure.Messaging.ServiceBus;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using PaymentService.Models;
-using Stripe;
-using System.Text.Json;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace PaymentService.Services
 {
@@ -55,18 +55,9 @@ namespace PaymentService.Services
                     db.Payments.Add(payment);
                     await db.SaveChangesAsync();
 
-                    // Initiate Stripe payment
-                    StripeConfiguration.ApiKey = Environment.GetEnvironmentVariable("STRIPE_API_KEY");
-                    var options = new PaymentIntentCreateOptions
-                    {
-                        Amount = (long)(order.TotalAmount * 100),
-                        Currency = "usd",
-                        Metadata = new Dictionary<string, string> { { "order_id", order.OrderId.ToString() } }
-                    };
-                    var service = new PaymentIntentService();
-                    var intent = service.Create(options);
-
-                    payment.StripePaymentIntentId = intent.Id;
+                    // No external payment provider configured here; mark payment as Initiated and set a placeholder external id
+                    payment.Status = "Initiated";
+                    payment.StripePaymentIntentId = Guid.NewGuid().ToString(); // placeholder external payment id
                     await db.SaveChangesAsync();
 
                     // Publish PaymentInitiated event

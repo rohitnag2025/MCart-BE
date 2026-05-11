@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: userservice
+  labels:
+    app: userservice
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: userservice
+  template:
+    metadata:
+      labels:
+        app: userservice
+    spec:
+      containers:
+      - name: userservice
+        image: mynagpacr.azurecr.io/userservice:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: SQLSERVER_CONNECTION_STRING
+          valueFrom:
+            secretKeyRef:
+              name: userservice-secrets
+              key: SQLSERVER_CONNECTION_STRING
+        - name: JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: userservice-secrets
+              key: JWT_SECRET
+        - name: SENDGRID_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: userservice-secrets
+              key: SENDGRID_API_KEY
+        - name: FACEBOOK_APP_ID
+          valueFrom:
+            secretKeyRef:
+              name: userservice-secrets
+              key: FACEBOOK_APP_ID
+        - name: FACEBOOK_APP_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: userservice-secrets
+              key: FACEBOOK_APP_SECRET
+        - name: TWITTER_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: userservice-secrets
+              key: TWITTER_API_KEY
+        - name: TWITTER_API_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: userservice-secrets
+              key: TWITTER_API_SECRET
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: userservice
+spec:
+  selector:
+    app: userservice
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP

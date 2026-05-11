@@ -1,0 +1,38 @@
+      - name: Set up kubectl
+        uses: azure/setup-kubectl@v3
+
+      - name: Set up Kubeconfig
+        run: |
+          echo "${{ secrets.KUBECONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
+
+      - name: Deploy UserService to AKS
+        run: |
+          kubectl apply -f k8s-userservice.yaml
+name: Build and Push Docker Images to ACR
+
+on:
+  push:
+    branches: [ cloud-deployment-user ]
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    env:
+      REGISTRY: mynagpacr.azurecr.io
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Log in to Azure Container Registry
+        uses: azure/docker-login@v2
+        with:
+          login-server: ${{ env.REGISTRY }}
+          username: ${{ secrets.ACR_USERNAME }}
+          password: ${{ secrets.ACR_PASSWORD }}
+
+      # Build and push only UserService
+      - name: Build and push UserService
+        run: |
+          docker build -t $REGISTRY/userservice:latest ./src/UserService
+          docker push $REGISTRY/userservice:latest

@@ -25,13 +25,19 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 // Use SQL Server for EF Core
+// Use SQLSERVER_CONNECTION_STRING from environment variable directly
+var sqlConnectionString = Environment.GetEnvironmentVariable("SQLSERVER_CONNECTION_STRING")
+    ?? throw new InvalidOperationException("SQLSERVER_CONNECTION_STRING is not configured.");
 builder.Services.AddDbContext<UserDbContext>(options =>
 {
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+    options.UseSqlServer(sqlConnectionString);
 });
 
+
 // JWT authentication using shared symmetric key (same secret used to issue tokens in UsersController)
-var jwtSecret = builder.Configuration["Jwt:Secret"] ?? throw new InvalidOperationException("Jwt:Secret is not configured.");
+var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET")
+    ?? builder.Configuration["Jwt:Secret"]
+    ?? throw new InvalidOperationException("JWT_SECRET is not configured.");
 Console.WriteLine($"[DEBUG] Jwt:Secret = '{jwtSecret}'");
 builder.Services.AddAuthentication(options =>
 {
@@ -53,8 +59,12 @@ builder.Services.AddAuthentication(options =>
     .AddCookie()
     .AddTwitter(twitterOptions =>
     {
-        twitterOptions.ConsumerKey = builder.Configuration["Authentication:Twitter:ConsumerAPIKey"] ?? throw new InvalidOperationException("Twitter ConsumerAPIKey is not configured.");
-        twitterOptions.ConsumerSecret = builder.Configuration["Authentication:Twitter:ConsumerSecret"] ?? throw new InvalidOperationException("Twitter ConsumerSecret is not configured.");
+        twitterOptions.ConsumerKey = Environment.GetEnvironmentVariable("TWITTER_API_KEY")
+            ?? builder.Configuration["Authentication:Twitter:ConsumerAPIKey"]
+            ?? throw new InvalidOperationException("Twitter ConsumerAPIKey is not configured.");
+        twitterOptions.ConsumerSecret = Environment.GetEnvironmentVariable("TWITTER_API_SECRET")
+            ?? builder.Configuration["Authentication:Twitter:ConsumerSecret"]
+            ?? throw new InvalidOperationException("Twitter ConsumerSecret is not configured.");
         twitterOptions.CallbackPath = "/external-login-callback";
     });
 

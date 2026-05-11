@@ -37,6 +37,18 @@ jobs:
         run: |
           echo "${{ secrets.KUBECONFIG_DATA }}" | base64 --decode > $HOME/.kube/config
 
+      - name: Create userservice-secrets in AKS
+        run: |
+          kubectl create secret generic userservice-secrets \
+            --from-literal=SQLSERVER_CONNECTION_STRING="${{ secrets.SQLSERVER_CONNECTION_STRING }}" \
+            --from-literal=JWT_SECRET="${{ secrets.JWT_SECRET }}" \
+            --from-literal=SENDGRID_API_KEY="${{ secrets.SENDGRID_API_KEY }}" \
+            --from-literal=FACEBOOK_APP_ID="${{ secrets.FACEBOOK_APP_ID }}" \
+            --from-literal=FACEBOOK_APP_SECRET="${{ secrets.FACEBOOK_APP_SECRET }}" \
+            --from-literal=TWITTER_API_KEY="${{ secrets.TWITTER_API_KEY }}" \
+            --from-literal=TWITTER_API_SECRET="${{ secrets.TWITTER_API_SECRET }}" \
+            --dry-run=client -o yaml | kubectl apply -f -
+
       - name: Deploy UserService to AKS
         run: |
           kubectl apply -f k8s-userservice.yaml

@@ -1,3 +1,4 @@
+using System;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Authentication;
@@ -82,7 +83,9 @@ namespace UserService.Controllers
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
             }
-            var jwtSecret = _config["Jwt:Secret"];
+            var jwtSecret = Environment.GetEnvironmentVariable("JWT_SECRET")
+                            ?? _config["Jwt:Secret"]
+                            ?? throw new InvalidOperationException("JWT_SECRET is not configured.");
             var token = UserService.Helpers.JwtHelper.GenerateJwtToken(user.UserId.ToString(), user.Email, user.Role, jwtSecret);
             // Redirect to frontend with token and user info
             var userJson = System.Text.Json.JsonSerializer.Serialize(new {
